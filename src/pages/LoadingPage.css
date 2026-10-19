@@ -1,0 +1,24 @@
+.loadingPageMain {
+   
+    min-height: 100dvh;
+    max-height: 100dvh;
+    min-width: 100dvw;
+    max-width: 100dvw;
+    
+}
+
+.loadingPageTrack {
+    display: flex;
+    flex-direction: row;
+}
+
+
+.slideImgDiv,
+.slideImg {
+    max-width: 90dvw;
+    max-height: 40vh;
+}
+
+.slide {
+    min-width: 95%;
+}
