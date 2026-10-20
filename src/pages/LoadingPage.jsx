@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useRef } from 'react'
 import { franc } from 'franc'
 import './LoadingPage.css'
+import unsafeWords from '../components/unsafeWords'
 
 function LoadingPage() {
     const [slides, setSlides] = useState([])
@@ -51,23 +52,26 @@ function LoadingPage() {
                                 if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
                                     // check img description language
                                     if (franc(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value) === "eng") {
-                                        // add slide to slides array
-                                        slidesVar.push(
-                                            {
-                                                imgLink: response.data.query.pages[i].imageinfo[0].url,
-                                                desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
-                                                license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
-                                                artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
-                                                licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
-                                                sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
-                                            }
-                                        )
-                                        
-                                        
-                                        console.log(response.data.query.pages[i].imageinfo[0].extmetadata)
-                                        seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
-                                        slidesFoundCount++
-                                        console.log("image found")
+                                        // check img description for unsafe words
+                                        if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
+                                            // add slide to slides array
+                                            slidesVar.push(
+                                                {
+                                                    imgLink: response.data.query.pages[i].imageinfo[0].url,
+                                                    desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
+                                                    license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
+                                                    artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
+                                                    licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
+                                                    sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
+                                                }
+                                            )
+                                            
+                                            
+                                            console.log(response.data.query.pages[i].imageinfo[0].extmetadata)
+                                            seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
+                                            slidesFoundCount++
+                                            console.log("image found")
+                                        }
                                     }
                                 }
                             }
@@ -86,6 +90,11 @@ function LoadingPage() {
         .catch((error) => {
             console.error("Error fetching data:", error)
         })
+    }
+
+    function checkSlideContentSafety (desc) {
+        console.log("word found: " + unsafeWords.some((word) => desc.toLowerCase().includes(word)))
+        return !unsafeWords.some((word) => desc.toLowerCase().includes(word))
     }
     
     // pretty self explanatory
@@ -139,7 +148,7 @@ function LoadingPage() {
     
     function hideOverlay() {
         if (overlayRef.current) {
-            overlayRef.current.style.display = 'none';
+            overlayRef.current.style.opacity = 0;
         }
     }
 
