@@ -127,6 +127,15 @@ function LoadingPage() {
             clearInterval(interval)
         }
     }, [])
+
+    useEffect(() => {
+        if (artistRefs.current[0] == null || descRefs.current[0] == null) {
+            return
+        }
+
+        artistRefs.current[0].setHTML("Artist: " + slides[0]?.artist)
+        descRefs.current[0].setHTML(slides[0]?.desc)
+    }, [slides])
     
     function hideOverlay() {
         if (overlayRef.current) {
