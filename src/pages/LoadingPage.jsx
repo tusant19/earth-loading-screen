@@ -15,6 +15,7 @@ function LoadingPage() {
     const artistRefs = useRef([])
     const offset = useRef(0)
     const slideTrackRef = useRef(null)
+    const overlayRef = useRef(null)
 
     function fetchSlides() {
         let slidesFoundCount = 0;
@@ -38,7 +39,7 @@ function LoadingPage() {
             let seenImagesVar = seenImages;
             for (let i = 0; i < response.data.query.pages.length; i++) {
                 console.log("checked image: ")
-                if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" ) {
+                if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
                     if (response.data.query.pages[i].imageinfo[0].size < 5000000) {
                         if ( /*(/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) == false */ true) {
                             if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {
@@ -65,6 +66,8 @@ function LoadingPage() {
                             }
                         }
                     }
+                } else {
+                    console.log("declide Image type: " + response.data.query.pages[i].imageinfo[0].mime)
                 }
             }
             if (slidesFoundCount === 0) {
@@ -80,7 +83,7 @@ function LoadingPage() {
     
     function nextSlide() {
         descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
-        artistRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].artist)
+        artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
 
         slideTrackRef.current.style.transition = 'transform 2.5s ease-in-out'
         if (currentSlide.current < slides.length - 4) {
@@ -100,7 +103,7 @@ function LoadingPage() {
 
     useEffect(() => {
             fetchSlides()
-    }, [])
+    }, [currentSlide.current])
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -116,9 +119,18 @@ function LoadingPage() {
         }
     }, [])
     
+    function hideOverlay() {
+        if (overlayRef.current) {
+            overlayRef.current.style.display = 'none';
+        }
+    }
 
     return (
         <div className='loadingPageMain'>
+            <div className='startOverlay' ref={overlayRef} onClick={hideOverlay}>
+                <p>Universe incorporated</p>
+                <p>Press anywhere to start</p>
+            </div>
             <div className='trackContainer'>
                 <div className='loadingPageTrack' ref={slideTrackRef}>
                     {slides.map((slide, index) => (
