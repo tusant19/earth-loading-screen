@@ -12,6 +12,11 @@
     flex-direction: row;
 }
 
+.trackContainer {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 
 .slideImgDiv,
 .slideImg {
@@ -20,5 +25,5 @@
 }
 
 .slide {
-    min-width: 95%;
+    min-width: 100%;
 }
