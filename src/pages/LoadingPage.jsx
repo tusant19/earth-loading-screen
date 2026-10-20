@@ -39,12 +39,19 @@ function LoadingPage() {
             let seenImagesVar = seenImages;
             for (let i = 0; i < response.data.query.pages.length; i++) {
                 console.log("checked image: ")
+                // check img type
                 if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
+                    // check img size
                     if (response.data.query.pages[i].imageinfo[0].size < 5000000) {
+                        // check img description for html (not in use)
                         if ( /*(/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) == false */ true) {
-                            if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {
+                            // check img description length
+                            if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {       
+                                // check if image has been seen before
                                 if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
+                                    // check img description language
                                     if (franc(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value) === "eng") {
+                                        // add slide to slides array
                                         slidesVar.push(
                                             {
                                                 imgLink: response.data.query.pages[i].imageinfo[0].url,
@@ -81,6 +88,7 @@ function LoadingPage() {
         })
     }
     
+    // pretty self explanatory
     function nextSlide() {
         descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
         artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
@@ -103,8 +111,9 @@ function LoadingPage() {
 
     useEffect(() => {
             fetchSlides()
-    }, [currentSlide.current])
+    }, [])
 
+    // scroll on a timer
     useEffect(() => {
         const interval = setInterval(() => {
             
