@@ -246,6 +246,9 @@ function LoadingPage() {
         //wait before continuing
         const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         wait(fadeOutInTimeSeconds * 1000).then(() => {
+            infoRefs.current[currentSlide.current + 1].style.width = imgRefs.current[currentSlide.current + 1].clientWidth + "px";
+            console.log("info width: " + infoRefs.current[currentSlide.current + 1].style.width);
+            console.log("img width: " + imgRefs.current[currentSlide.current + 1].clientWidth);
             slideRefs.current[currentSlide.current + 2].style.opacity = 0;
             console.log("desc to be set: " + slides[currentSlide.current + 1].desc)
             descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
@@ -328,11 +331,11 @@ function LoadingPage() {
                                 <div className='slideImgDiv'>
                                     <img src={slide.imgLink} ref={el => imgRefs.current[index] = el} className="slideImg" alt="Current Slide Img" />
                                 </div>
-                                <div className='slideDetailsDiv'>
+                                <div ref={el => infoRefs.current[index] = el}c lassName='slideDetailsDiv'>
                                     <div className='slideDescDiv'>
                                         <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
                                     </div>
-                                    <div className='slideInfoDiv' ref={el => infoRefs.current[index] = el}>
+                                    <div className='slideInfoDiv'>
                                         <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
                                         <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
                                         <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
