@@ -8,8 +8,8 @@ import './LoadingPage.css'
 import unsafeWords from '../components/unsafeWords'
 
 function LoadingPage() {
-    const [hasSeenISS, setHasSeenISS] = useState(false)
-    const [hasSeenNOAA, setHasSeenNOAA] = useState(false)
+    const hasSeenISSRef = useRef(false)
+    const hasSeenNOAARef = useRef(false)
     const [delayBetweenSlides, setDelayBetweenSlides] = useState(5000);
     const [fadeOutInTimeSeconds, setFadeOutInTimeSeconds] = useState(2);
     const [apiRequestsInLastMinute, setApiRequestsInLastMinute] = useState(0);
@@ -68,16 +68,18 @@ function LoadingPage() {
                                     // check img description for unsafe words
                                     if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
                                         // if seen ISS hide further ISS images because there's a lot
-                                        if (hasSeenISS == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                        if (hasSeenISSRef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
                                             continue;
                                         } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
                                             setHasSeenISS(true)
+                                            hasSeenISSRef.current = true;
                                         }
                                         // if seen NOAA hide further NOAA images because there's a lot
-                                        if (hasSeenNOAA == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                        if (hasSeenNOAARef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
                                             continue;
                                         } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
                                             setHasSeenNOAA(true)
+                                            hasSeenNOAARef.current = true;
                                         }
                                         let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
                                         let readingTime = (spaceCount + 1) / wpm * 60 * 1000 + (fadeOutInTimeSeconds * 1000 * 2);
