@@ -17,6 +17,7 @@ function LoadingPage() {
     const offset = useRef(0)
     const slideTrackRef = useRef(null)
     const overlayRef = useRef(null)
+    const trackContainerRef = useRef(null)
 
     function fetchSlides() {
         let slidesFoundCount = 0;
@@ -96,13 +97,91 @@ function LoadingPage() {
         console.log("word found: " + unsafeWords.some((word) => desc.toLowerCase().includes(word)))
         return !unsafeWords.some((word) => desc.toLowerCase().includes(word))
     }
-    
+
+    function quickFetchFirstSlide() {
+        console.log("quick fetch start " + Date.now())
+        axios.get("https://commons.wikimedia.org/w/api.php", {
+            params: {
+                action: "query",
+                format: "json",
+                prop: "imageinfo",
+                generator: "random",
+                iiprop: "url|extmetadata|mime|size|",
+                grnnamespace: 6,
+                grnlimit: 5,
+                formatversion: 2,
+                origin: "*",
+                iiextmetadatalanguage: "en",
+                _: Date.now()
+            }
+        })
+        .then((response) => {
+            console.log("quick fetch finish " + Date.now())
+            let slidesVar = slides;
+            let foundSlide = false;
+            let seenImagesVar = seenImages;
+            for (let i = 0; i < response.data.query.pages.length; i++) {
+                // check img type
+                if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
+                    // check img size
+                    if (response.data.query.pages[i].imageinfo[0].size < 10000000) {
+                        // check img description length
+                        if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {
+                            // check if image has been seen before
+                            if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
+                                // check image desctiption for unsafe words
+                                if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
+                                    // check img description for html (not in use)
+                                    if (/* (/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) */ true) {
+                                        slidesVar.push(
+                                            {
+                                                imgLink: response.data.query.pages[i].imageinfo[0].url,
+                                                desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
+                                                license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
+                                                artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
+                                                licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
+                                                sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
+                                            }
+                                        )
+                                        artistRefs.current[0]?.setHTML("Artist: " + slidesVar[0]?.artist)
+                                        descRefs.current[0]?.setHTML(slidesVar[0]?.desc)
+                                        console.log("quick fetch found slide " + response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)
+                                        foundSlide = true
+                                        seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (foundSlide === false) {
+                console.log("No valid slide")
+                quickFetchFirstSlide()
+            } else {
+                setSlides([...slidesVar])
+                setSeenImages([...seenImagesVar])
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching data:", error)
+        })
+    }
+
     // pretty self explanatory
     function nextSlide() {
+        slideRefs.current[currentSlide.current + 1].style.opacity = 0;
+        let timeout = setTimeout(() => {
+            slideRefs.current[currentSlide.current + 1].style.transition = "opacity 0.5s ease-in-out"
+            slideRefs.current[currentSlide.current + 1].style.opacity = 0
+        }, 500)
+        console.log("desc to be set: " + slides[currentSlide.current + 1].desc)
         descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
         artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
-
-        slideTrackRef.current.style.transition = 'transform 2.5s ease-in-out'
+        console.log("current slide desc " + slides[currentSlide.current + 1].desc)
+        slideRefs.current[currentSlide.current + 1].style.transition = "opacity 0.5s ease-in-out"
+        slideRefs.current[currentSlide.current + 1].style.opacity = 1
         if (currentSlide.current < slides.length - 4) {
             console.log("enough slides left")
             currentSlide.current += 1
@@ -124,8 +203,13 @@ function LoadingPage() {
 
     // scroll on a timer
     useEffect(() => {
+        let isVisible = false;
         const interval = setInterval(() => {
-            
+            if (isVisible === false) {
+                slideTrackRef.current.style.opacity = 1;
+
+                isVisible = true;
+            }
             console.log("Interval triggered")
             
             // fetchSlides()
@@ -136,15 +220,6 @@ function LoadingPage() {
             clearInterval(interval)
         }
     }, [])
-
-    useEffect(() => {
-        if (artistRefs.current[0] == null || descRefs.current[0] == null) {
-            return
-        }
-
-        artistRefs.current[0].setHTML("Artist: " + slides[0]?.artist)
-        descRefs.current[0].setHTML(slides[0]?.desc)
-    }, [slides])
     
     function hideOverlay() {
         if (overlayRef.current) {
@@ -152,13 +227,19 @@ function LoadingPage() {
         }
     }
 
+    useEffect(() => {
+        quickFetchFirstSlide();
+        artistRefs.current[0]?.setHTML("Artist: " + slides[0]?.artist)
+        descRefs.current[0]?.setHTML(slides[0]?.desc)
+    }, [slideRefs.current[0], descRefs.current[0], artistRefs.current[0]])
+
     return (
         <div className='loadingPageMain'>
             <div className='startOverlay' ref={overlayRef} onClick={hideOverlay}>
                 <p>Universe incorporated</p>
                 <p>Press anywhere to start</p>
             </div>
-            <div className='trackContainer'>
+            <div className='trackContainer' ref={trackContainerRef}>
                 <div className='loadingPageTrack' ref={slideTrackRef}>
                     {slides.map((slide, index) => (
                         <div key={index} className='slide' ref={el => slideRefs.current[index] = el}>
