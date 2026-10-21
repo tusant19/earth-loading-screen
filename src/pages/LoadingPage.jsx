@@ -12,9 +12,12 @@ function LoadingPage() {
     const [hasSeenNOAA, setHasSeenNOAA] = useState(false)
     const [delayBetweenSlides, setDelayBetweenSlides] = useState(5000);
     const [fadeOutInTimeSeconds, setFadeOutInTimeSeconds] = useState(2);
+    const [apiRequestsInLastMinute, setApiRequestsInLastMinute] = useState(0);
     const [wpm, setWpm] = useState(150);
     const [slides, setSlides] = useState([])
     const [seenImages, setSeenImages] = useState([])
+    const infoRefs = useRef([])
+    const imgRefs = useRef([])
     const readingTimes = useRef([])
     const currentSlide = useRef(0)
     const slideRefs = useRef([])
@@ -26,6 +29,11 @@ function LoadingPage() {
     const trackContainerRef = useRef(null)
 
     function fetchSlides() {
+        if (apiRequestsInLastMinute >= 60) {
+            console.log("API guardrail reached")
+            return
+        }
+        setApiRequestsInLastMinute(apiRequestsInLastMinute + 1)
         let slidesFoundCount = 0;
         axios.get("https://commons.wikimedia.org/w/api.php", {
             params: {
@@ -118,6 +126,11 @@ function LoadingPage() {
     }
 
     function quickFetchFirstSlide() {
+        if (apiRequestsInLastMinute >= 60) {
+            console.log("API guardrail reached")
+            return
+        }
+        setApiRequestsInLastMinute(apiRequestsInLastMinute + 1)
         console.log("quick fetch start " + Date.now())
         axios.get("https://commons.wikimedia.org/w/api.php", {
             params: {
@@ -136,6 +149,11 @@ function LoadingPage() {
             }
         })
         .then((response) => {
+            if (response.status == 429) {
+                console.log("Rate limit reached, adding warning slide")
+                addWarningSlide()
+                return
+            }
             console.log("quick fetch finish " + Date.now())
             let slidesVar = slides;
             let foundSlide = false;
@@ -190,8 +208,32 @@ function LoadingPage() {
         })
     }
 
+    function addWarningSlide() {
+        let slidesVar = slides;
+        for (let i = 0; i < 4; i++) {
+            slidesVar.push(
+                {
+                    imgLink: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Commons-logo.svg/1200px-Commons-logo.svg.png",
+                    desc: "Rate limit reached. Please wait a minute before continuing.",
+                    license: "Public Domain",
+                    artist: "Wikimedia Commons",
+                    licenseUrl: "https://commons.wikimedia.org/wiki/File:Commons-logo.svg",
+                    sourceLink: "https://commons.wikimedia.org/wiki/File:Commons-logo.svg"
+                }
+            )
+            setSlides([...slidesVar])
+        }
+    }
+
     //pretty self explanatory for the most part
     function nextSlide() {
+        // if ratelimited
+        if (slides.lenth <= currentSlide.current + 2) {
+            console.log("Rate limit reached, adding warning slide")
+            //insert ratelimit warning slide
+            addWarningSlide()
+        }
+
         if (currentSlide.current == 0) {
             for (let slide of slideRefs.current) {
                 slide.style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
@@ -252,6 +294,13 @@ function LoadingPage() {
             clearInterval(interval)
         }
     }, [])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setApiRequestsInLastMinute(0)
+        }, 60000)
+        return () => clearInterval(interval)
+    }, [])
     
     function hideOverlay() {
         if (overlayRef.current) {
@@ -277,15 +326,17 @@ function LoadingPage() {
                         <div key={index} className='slide' ref={el => slideRefs.current[index] = el}>
                             <div className='slideInner'>
                                 <div className='slideImgDiv'>
-                                    <img src={slide.imgLink} loading="lazy" className="slideImg" alt="Current Slide Img" />
+                                    <img src={slide.imgLink} ref={el => imgRefs.current[index] = el} className="slideImg" alt="Current Slide Img" />
                                 </div>
-                                <div className='slideDescDiv'>
-                                    <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
-                                </div>
-                                <div className='slideInfoDiv'>
-                                    <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
-                                    <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
-                                    <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
+                                <div className='slideDetailsDiv'>
+                                    <div className='slideDescDiv'>
+                                        <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
+                                    </div>
+                                    <div className='slideInfoDiv' ref={el => infoRefs.current[index] = el}>
+                                        <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
+                                        <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
+                                        <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

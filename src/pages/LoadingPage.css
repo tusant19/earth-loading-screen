@@ -20,9 +20,15 @@
 
 .slideImgDiv,
 .slideImg {
-    max-width: 90dvw;
     min-height: 40vh;
     max-height: 40vh;
+    max-width: 100%;
+    display: block;
+}
+
+.slideImgDiv {
+    width: fit-content;
+    min-width: 0;
 }
 
 .slide {
@@ -46,4 +52,24 @@
     color: black;
     font-size: 2vh;
     text-align: center;
+}
+
+.slideInner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    border: 1px solid gray;
+    margin-left: 5vw;
+     width: fit-content;
+}
+
+.slideDetailsDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    min-width: 0;
+    width: 100%;
+    overflow-wrap: anywhere;
 }
