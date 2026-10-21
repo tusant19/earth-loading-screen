@@ -21,6 +21,7 @@
 .slideImgDiv,
 .slideImg {
     max-width: 90dvw;
+    min-height: 40vh;
     max-height: 40vh;
 }
 

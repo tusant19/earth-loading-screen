@@ -12,8 +12,10 @@ function LoadingPage() {
     const [hasSeenNOAA, setHasSeenNOAA] = useState(false)
     const [delayBetweenSlides, setDelayBetweenSlides] = useState(5000);
     const [fadeOutInTimeSeconds, setFadeOutInTimeSeconds] = useState(2);
+    const [wpm, setWpm] = useState(150);
     const [slides, setSlides] = useState([])
     const [seenImages, setSeenImages] = useState([])
+    const readingTimes = useRef([])
     const currentSlide = useRef(0)
     const slideRefs = useRef([])
     const descRefs = useRef([])
@@ -58,17 +60,21 @@ function LoadingPage() {
                                     // check img description for unsafe words
                                     if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
                                         // if seen ISS hide further ISS images because there's a lot
-                                        if (hasSeenISS === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                        if (hasSeenISS == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
                                             continue;
                                         } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
                                             setHasSeenISS(true)
                                         }
                                         // if seen NOAA hide further NOAA images because there's a lot
-                                        if (hasSeenNOAA === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                        if (hasSeenNOAA == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
                                             continue;
                                         } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
                                             setHasSeenNOAA(true)
                                         }
+                                        let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
+                                        let readingTime = (spaceCount + 1) / wpm * 60 * 1000 + (fadeOutInTimeSeconds * 1000 * 2);
+                                        readingTimes.current.push(readingTime)
+                                        console.log("reading time: " + readingTime);
                                         // add slide to slides array
                                         slidesVar.push(
                                             {
@@ -145,6 +151,10 @@ function LoadingPage() {
                             if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
                                 // check img description for html (not in use)
                                 if (/* (/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) */ true) {
+                                    let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
+                                    let readingTime = (spaceCount + 1) / wpm * 60 * 1000 + (fadeOutInTimeSeconds * 1000 * 2);
+                                    readingTimes.current.push(readingTime)
+                                    console.log("reading time: " + readingTime);
                                     slidesVar.push(
                                         {
                                             imgLink: response.data.query.pages[i].imageinfo[0].url,
@@ -219,12 +229,18 @@ function LoadingPage() {
 
     // scroll on a timer
     useEffect(() => {
+        let timer = 0;
         const interval = setInterval(() => {
-            console.log("Interval triggered")
+            timer += 300;
+            if (timer >= readingTimes.current[currentSlide.current]) {
+                console.log("current slide desc: " + slides[currentSlide.current].desc);
+                timer = 0;
+                console.log("Interval triggered")
+                // fetchSlides()
+                nextSlide()
+            }
             
-            // fetchSlides()
-            nextSlide()
-        }, delayBetweenSlides);
+        }, 300);
         
         return () =>  {
             clearInterval(interval)
@@ -253,16 +269,18 @@ function LoadingPage() {
                 <div className='loadingPageTrack' ref={slideTrackRef}>
                     {slides.map((slide, index) => (
                         <div key={index} className='slide' ref={el => slideRefs.current[index] = el}>
-                            <div className='slideImgDiv'>
-                                <img src={slide.imgLink} loading="lazy" className="slideImg" alt="Current Slide Img" />
-                            </div>
-                            <div className='slideDescDiv'>
-                                <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
-                            </div>
-                            <div className='slideInfoDiv'>
-                                <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
-                                <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
-                                <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
+                            <div className='slideInner'>
+                                <div className='slideImgDiv'>
+                                    <img src={slide.imgLink} loading="lazy" className="slideImg" alt="Current Slide Img" />
+                                </div>
+                                <div className='slideDescDiv'>
+                                    <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
+                                </div>
+                                <div className='slideInfoDiv'>
+                                    <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
+                                    <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
+                                    <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
+                                </div>
                             </div>
                         </div>
                     ))}
