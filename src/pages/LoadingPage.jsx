@@ -47,48 +47,45 @@ function LoadingPage() {
                 console.log("checked image: ")
                 // check img type
                 if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
-                    // check img size
-                    if (response.data.query.pages[i].imageinfo[0].size < 5000000) {
-                        // check img description for html (not in use)
-                        if ( /*(/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) == false */ true) {
-                            // check img description length
-                            if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {       
-                                // check if image has been seen before
-                                if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
-                                    // check img description language
-                                    if (franc(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value) === "eng") {
-                                        // check img description for unsafe words
-                                        if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
-                                            // if seen ISS hide further ISS images because there's a lot
-                                            if (hasSeenISS === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
-                                                continue;
-                                            } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
-                                                setHasSeenISS(true)
-                                            }
-                                            // if seen NOAA hide further NOAA images because there's a lot
-                                            if (hasSeenNOAA === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
-                                                continue;
-                                            } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
-                                                setHasSeenNOAA(true)
-                                            }
-                                            // add slide to slides array
-                                            slidesVar.push(
-                                                {
-                                                    imgLink: response.data.query.pages[i].imageinfo[0].url,
-                                                    desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
-                                                    license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
-                                                    artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
-                                                    licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
-                                                    sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
-                                                }
-                                            )
-                                            
-                                            
-                                            console.log(response.data.query.pages[i].imageinfo[0].extmetadata)
-                                            seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
-                                            slidesFoundCount++
-                                            console.log("image found")
+                    // check img description for html (not in use)
+                    if ( /*(/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) == false */ true) {
+                        // check img description length
+                        if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {       
+                            // check if image has been seen before
+                            if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
+                                // check img description language
+                                if (franc(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value) === "eng") {
+                                    // check img description for unsafe words
+                                    if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
+                                        // if seen ISS hide further ISS images because there's a lot
+                                        if (hasSeenISS === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                            continue;
+                                        } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                            setHasSeenISS(true)
                                         }
+                                        // if seen NOAA hide further NOAA images because there's a lot
+                                        if (hasSeenNOAA === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                            continue;
+                                        } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                            setHasSeenNOAA(true)
+                                        }
+                                        // add slide to slides array
+                                        slidesVar.push(
+                                            {
+                                                imgLink: response.data.query.pages[i].imageinfo[0].url,
+                                                desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
+                                                license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
+                                                artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
+                                                licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
+                                                sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
+                                            }
+                                        )
+                                        
+                                        
+                                        console.log(response.data.query.pages[i].imageinfo[0].extmetadata)
+                                        seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
+                                        slidesFoundCount++
+                                        console.log("image found")
                                     }
                                 }
                             }
@@ -128,6 +125,7 @@ function LoadingPage() {
                 formatversion: 2,
                 origin: "*",
                 iiextmetadatalanguage: "en",
+                iiurlwidth: 1080,
                 _: Date.now()
             }
         })
@@ -139,33 +137,30 @@ function LoadingPage() {
             for (let i = 0; i < response.data.query.pages.length; i++) {
                 // check img type
                 if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
-                    // check img size
-                    if (response.data.query.pages[i].imageinfo[0].size < 10000000) {
-                        // check img description length
-                        if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {
-                            // check if image has been seen before
-                            if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
-                                // check image desctiption for unsafe words
-                                if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
-                                    // check img description for html (not in use)
-                                    if (/* (/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) */ true) {
-                                        slidesVar.push(
-                                            {
-                                                imgLink: response.data.query.pages[i].imageinfo[0].url,
-                                                desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
-                                                license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
-                                                artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
-                                                licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
-                                                sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
-                                            }
-                                        )
-                                        artistRefs.current[0]?.setHTML("Artist: " + slidesVar[0]?.artist)
-                                        descRefs.current[0]?.setHTML(slidesVar[0]?.desc)
-                                        console.log("quick fetch found slide " + response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)
-                                        foundSlide = true
-                                        seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
-                                        break
-                                    }
+                    // check img description length
+                    if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {
+                        // check if image has been seen before
+                        if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
+                            // check image desctiption for unsafe words
+                            if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
+                                // check img description for html (not in use)
+                                if (/* (/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) */ true) {
+                                    slidesVar.push(
+                                        {
+                                            imgLink: response.data.query.pages[i].imageinfo[0].url,
+                                            desc: response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value,
+                                            license: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseShortName?.value,
+                                            artist: response.data.query.pages[i].imageinfo[0].extmetadata?.Artist?.value,
+                                            licenseUrl: response.data.query.pages[i].imageinfo[0].extmetadata?.LicenseUrl?.value,
+                                            sourceLink: response.data.query.pages[i].imageinfo[0]?.descriptionurl
+                                        }
+                                    )
+                                    artistRefs.current[0]?.setHTML("Artist: " + slidesVar[0]?.artist)
+                                    descRefs.current[0]?.setHTML(slidesVar[0]?.desc)
+                                    console.log("quick fetch found slide " + response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)
+                                    foundSlide = true
+                                    seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
+                                    break
                                 }
                             }
                         }
