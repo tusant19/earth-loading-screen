@@ -192,6 +192,12 @@ function LoadingPage() {
 
     //pretty self explanatory for the most part
     function nextSlide() {
+        if (currentSlide.current == 0) {
+            for (let slide of slideRefs.current) {
+                slide.style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
+                slide.style.opacity = 0;
+            }
+        }
         // fade out the currently displayed slide
         slideRefs.current[currentSlide.current].style.transition =  `opacity ${fadeOutInTimeSeconds}s ease-in-out`
         slideRefs.current[currentSlide.current].style.opacity = 0;
