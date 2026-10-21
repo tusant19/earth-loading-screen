@@ -8,7 +8,10 @@ import './LoadingPage.css'
 import unsafeWords from '../components/unsafeWords'
 
 function LoadingPage() {
-    const [delayBetweenSlides, setDelayBetweenSlides] = useState(4000);
+    const [hasSeenISS, setHasSeenISS] = useState(false)
+    const [hasSeenNOAA, setHasSeenNOAA] = useState(false)
+    const [delayBetweenSlides, setDelayBetweenSlides] = useState(5000);
+    const [fadeOutInTimeSeconds, setFadeOutInTimeSeconds] = useState(2);
     const [slides, setSlides] = useState([])
     const [seenImages, setSeenImages] = useState([])
     const currentSlide = useRef(0)
@@ -56,6 +59,18 @@ function LoadingPage() {
                                     if (franc(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value) === "eng") {
                                         // check img description for unsafe words
                                         if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
+                                            // if seen ISS hide further ISS images because there's a lot
+                                            if (hasSeenISS === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                                continue;
+                                            } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                                setHasSeenISS(true)
+                                            }
+                                            // if seen NOAA hide further NOAA images because there's a lot
+                                            if (hasSeenNOAA === true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                                continue;
+                                            } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                                setHasSeenNOAA(true)
+                                            }
                                             // add slide to slides array
                                             slidesVar.push(
                                                 {
@@ -170,28 +185,37 @@ function LoadingPage() {
         })
     }
 
-    // pretty self explanatory
+    //pretty self explanatory for the most part
     function nextSlide() {
-        slideRefs.current[currentSlide.current + 2].style.opacity = 0;
-        console.log("desc to be set: " + slides[currentSlide.current + 1].desc)
-        descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
-        artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
-        console.log("current slide desc " + slides[currentSlide.current + 1].desc)
-        slideRefs.current[currentSlide.current + 1].style.transition = "opacity 2s ease-in-out"
-        slideRefs.current[currentSlide.current + 1].style.opacity = 1
-        if (currentSlide.current < slides.length - 4) {
-            console.log("enough slides left")
-            currentSlide.current += 1
-            offset.current -= window.innerWidth
-            slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
-            
-        } else {
-            currentSlide.current += 1
-            offset.current -= window.innerWidth
-            slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
-            console.log("get more")
-            fetchSlides()
-        }
+        // fade out the currently displayed slide
+        slideRefs.current[currentSlide.current].style.transition =  `opacity ${fadeOutInTimeSeconds}s ease-in-out`
+        slideRefs.current[currentSlide.current].style.opacity = 0;
+        //wait before continuing
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        wait(fadeOutInTimeSeconds * 1000).then(() => {
+            slideRefs.current[currentSlide.current + 2].style.opacity = 0;
+            console.log("desc to be set: " + slides[currentSlide.current + 1].desc)
+            descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
+            artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
+            console.log("current slide desc " + slides[currentSlide.current + 1].desc)
+            slideRefs.current[currentSlide.current + 1].style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
+            slideRefs.current[currentSlide.current + 1].style.opacity = 1
+            if (currentSlide.current < slides.length - 4) {
+                console.log("enough slides left")
+                currentSlide.current += 1
+                offset.current -= window.innerWidth
+                slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
+                
+            } else {
+                currentSlide.current += 1
+                offset.current -= window.innerWidth
+                slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
+                console.log("get more")
+                fetchSlides()
+            }
+        })
+
+        
     }
 
     useEffect(() => {
