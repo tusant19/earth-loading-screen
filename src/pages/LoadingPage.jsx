@@ -8,6 +8,7 @@ import './LoadingPage.css'
 import unsafeWords from '../components/unsafeWords'
 
 function LoadingPage() {
+    const [delayBetweenSlides, setDelayBetweenSlides] = useState(4000);
     const [slides, setSlides] = useState([])
     const [seenImages, setSeenImages] = useState([])
     const currentSlide = useRef(0)
@@ -171,16 +172,12 @@ function LoadingPage() {
 
     // pretty self explanatory
     function nextSlide() {
-        slideRefs.current[currentSlide.current + 1].style.opacity = 0;
-        let timeout = setTimeout(() => {
-            slideRefs.current[currentSlide.current + 1].style.transition = "opacity 0.5s ease-in-out"
-            slideRefs.current[currentSlide.current + 1].style.opacity = 0
-        }, 500)
+        slideRefs.current[currentSlide.current + 2].style.opacity = 0;
         console.log("desc to be set: " + slides[currentSlide.current + 1].desc)
         descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
         artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
         console.log("current slide desc " + slides[currentSlide.current + 1].desc)
-        slideRefs.current[currentSlide.current + 1].style.transition = "opacity 0.5s ease-in-out"
+        slideRefs.current[currentSlide.current + 1].style.transition = "opacity 2s ease-in-out"
         slideRefs.current[currentSlide.current + 1].style.opacity = 1
         if (currentSlide.current < slides.length - 4) {
             console.log("enough slides left")
@@ -203,18 +200,12 @@ function LoadingPage() {
 
     // scroll on a timer
     useEffect(() => {
-        let isVisible = false;
         const interval = setInterval(() => {
-            if (isVisible === false) {
-                slideTrackRef.current.style.opacity = 1;
-
-                isVisible = true;
-            }
             console.log("Interval triggered")
             
             // fetchSlides()
             nextSlide()
-        }, 5000);
+        }, delayBetweenSlides);
         
         return () =>  {
             clearInterval(interval)
@@ -223,7 +214,7 @@ function LoadingPage() {
     
     function hideOverlay() {
         if (overlayRef.current) {
-            overlayRef.current.style.opacity = 0;
+            overlayRef.current.style.opacity = 0;       
         }
     }
 
