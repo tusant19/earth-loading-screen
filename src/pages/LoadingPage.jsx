@@ -308,6 +308,7 @@ function LoadingPage() {
     function hideOverlay() {
         if (overlayRef.current) {
             overlayRef.current.style.opacity = 0;       
+            overlayRef.current.style.pointerEvents = "none";
         }
     }
 
