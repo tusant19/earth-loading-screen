@@ -37,6 +37,20 @@
     margin-top: 5vh;
 }
 
+@media (width > 700px) {
+    .slide {
+        margin-top: 0dvh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .slideInner {
+        margin-top: 0dvh;
+    }
+}
+
 .startOverlay {
     position: fixed;
     top: 0;
