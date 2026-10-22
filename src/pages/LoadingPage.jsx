@@ -28,6 +28,47 @@ function LoadingPage() {
     const overlayRef = useRef(null)
     const trackContainerRef = useRef(null)
 
+    useEffect(() => {
+        let timer = 0;
+        const interval = setInterval(() => {
+            timer += 500;
+        }, 500);
+        function handleResize() {
+            if (timer >= 1000) {
+                timer = 0;
+                resetEverything()
+                console.log("resetting everything due to resize")
+                quickFetchFirstSlide()
+            }
+        }
+        addEventListener('resize', handleResize);
+        return () => {
+            removeEventListener('resize', handleResize);
+            clearInterval(interval);
+        };
+    }, []);
+
+    useEffect(() => {
+    })
+
+    function resetEverything() {
+        setSlides([])
+        setSeenImages([])
+        hasSeenISSRef.current = false
+        hasSeenNOAARef.current = false
+        setApiRequestsInLastMinute(0)
+        infoRefs.current = []
+        imgRefs.current = []
+        readingTimes.current = []
+        currentSlide.current = 0
+        slideRefs.current = []
+        descRefs.current = []
+        artistRefs.current = []
+        offset.current = 0
+        slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
+        quickFetchFirstSlide()
+    }
+
     function fetchSlides() {
         if (apiRequestsInLastMinute >= 60) {
             //console.log"API guardrail reached")
