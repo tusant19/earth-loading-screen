@@ -39,6 +39,7 @@ function LoadingPage() {
                 resetEverything()
                 console.log("resetting everything due to resize")
                 quickFetchFirstSlide()
+                fetchSlides()
             }
         }
         addEventListener('resize', handleResize);
