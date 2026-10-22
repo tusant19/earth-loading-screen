@@ -30,7 +30,7 @@ function LoadingPage() {
 
     function fetchSlides() {
         if (apiRequestsInLastMinute >= 60) {
-            console.log("API guardrail reached")
+            //console.log"API guardrail reached")
             return
         }
         setApiRequestsInLastMinute(apiRequestsInLastMinute + 1)
@@ -54,7 +54,7 @@ function LoadingPage() {
             let slidesVar = slides;
             let seenImagesVar = seenImages;
             for (let i = 0; i < response.data.query.pages.length; i++) {
-                console.log("checked image: ")
+                //console.log"checked image: ")
                 // check img type
                 if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
                     // check img description for html (not in use)
@@ -82,7 +82,7 @@ function LoadingPage() {
                                         let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
                                         let readingTime = (spaceCount + 1) / wpm * 60 * 1000 + (fadeOutInTimeSeconds * 1000 * 2);
                                         readingTimes.current.push(readingTime)
-                                        console.log("reading time: " + readingTime);
+                                        //console.log"reading time: " + readingTime);
                                         // add slide to slides array
                                         slidesVar.push(
                                             {
@@ -96,17 +96,17 @@ function LoadingPage() {
                                         )
                                         
                                         
-                                        console.log(response.data.query.pages[i].imageinfo[0].extmetadata)
+                                        //console.logresponse.data.query.pages[i].imageinfo[0].extmetadata)
                                         seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
                                         slidesFoundCount++
-                                        console.log("image found")
+                                        //console.log"image found")
                                     }
                                 }
                             }
                         }
                     }
                 } else {
-                    console.log("declide Image type: " + response.data.query.pages[i].imageinfo[0].mime)
+                    //console.log"declide Image type: " + response.data.query.pages[i].imageinfo[0].mime)
                 }
             }
             if (slidesFoundCount === 0) {
@@ -121,17 +121,17 @@ function LoadingPage() {
     }
 
     function checkSlideContentSafety (desc) {
-        console.log("word found: " + unsafeWords.some((word) => desc.toLowerCase().includes(word)))
+        //console.log"word found: " + unsafeWords.some((word) => desc.toLowerCase().includes(word)))
         return !unsafeWords.some((word) => desc.toLowerCase().includes(word))
     }
 
     function quickFetchFirstSlide() {
         if (apiRequestsInLastMinute >= 60) {
-            console.log("API guardrail reached")
+            //console.log"API guardrail reached")
             return
         }
         setApiRequestsInLastMinute(apiRequestsInLastMinute + 1)
-        console.log("quick fetch start " + Date.now())
+        //console.log"quick fetch start " + Date.now())
         axios.get("https://commons.wikimedia.org/w/api.php", {
             params: {
                 action: "query",
@@ -150,11 +150,11 @@ function LoadingPage() {
         })
         .then((response) => {
             if (response.status == 429) {
-                console.log("Rate limit reached, adding warning slide")
+                //console.log"Rate limit reached, adding warning slide")
                 addWarningSlide()
                 return
             }
-            console.log("quick fetch finish " + Date.now())
+            //console.log"quick fetch finish " + Date.now())
             let slidesVar = slides;
             let foundSlide = false;
             let seenImagesVar = seenImages;
@@ -172,7 +172,7 @@ function LoadingPage() {
                                     let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
                                     let readingTime = (spaceCount + 1) / wpm * 60 * 1000 + (fadeOutInTimeSeconds * 1000 * 2);
                                     readingTimes.current.push(readingTime)
-                                    console.log("reading time: " + readingTime);
+                                    //console.log"reading time: " + readingTime);
                                     slidesVar.push(
                                         {
                                             imgLink: response.data.query.pages[i].imageinfo[0].url,
@@ -185,7 +185,7 @@ function LoadingPage() {
                                     )
                                     artistRefs.current[0]?.setHTML("Artist: " + slidesVar[0]?.artist)
                                     descRefs.current[0]?.setHTML(slidesVar[0]?.desc)
-                                    console.log("quick fetch found slide " + response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)
+                                    //console.log"quick fetch found slide " + response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)
                                     foundSlide = true
                                     seenImagesVar.push(response.data.query.pages[i].imageinfo[0].url)
                                     break
@@ -196,7 +196,7 @@ function LoadingPage() {
                 }
             }
             if (foundSlide === false) {
-                console.log("No valid slide")
+                //console.log"No valid slide")
                 quickFetchFirstSlide()
             } else {
                 setSlides([...slidesVar])
@@ -229,7 +229,7 @@ function LoadingPage() {
     function nextSlide() {
         // if ratelimited
         if (slides.lenth <= currentSlide.current + 2) {
-            console.log("Rate limit reached, adding warning slide")
+            //console.log"Rate limit reached, adding warning slide")
             //insert ratelimit warning slide
             addWarningSlide()
         }
@@ -246,18 +246,21 @@ function LoadingPage() {
         //wait before continuing
         const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         wait(fadeOutInTimeSeconds * 1000).then(() => {
-            infoRefs.current[currentSlide.current + 1].style.width = imgRefs.current[currentSlide.current + 1].clientWidth + "px";
-            console.log("info width: " + infoRefs.current[currentSlide.current + 1].style.width);
-            console.log("img width: " + imgRefs.current[currentSlide.current + 1].clientWidth);
+            //if not mobile
+            if (window.innerWidth > 700) {
+                infoRefs.current[currentSlide.current + 1].style.width = imgRefs.current[currentSlide.current + 1].clientWidth + "px";
+            }
+            //console.log"info width: " + infoRefs.current[currentSlide.current + 1].style.width);
+            //console.log"img width: " + imgRefs.current[currentSlide.current + 1].clientWidth);
             slideRefs.current[currentSlide.current + 2].style.opacity = 0;
-            console.log("desc to be set: " + slides[currentSlide.current + 1].desc)
+            //console.log"desc to be set: " + slides[currentSlide.current + 1].desc)
             descRefs.current[currentSlide.current + 1].setHTML(slides[currentSlide.current + 1].desc)
             artistRefs.current[currentSlide.current + 1].setHTML("Artist: " + slides[currentSlide.current + 1].artist)
-            console.log("current slide desc " + slides[currentSlide.current + 1].desc)
+            //console.log"current slide desc " + slides[currentSlide.current + 1].desc)
             slideRefs.current[currentSlide.current + 1].style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
             slideRefs.current[currentSlide.current + 1].style.opacity = 1
             if (currentSlide.current < slides.length - 4) {
-                console.log("enough slides left")
+                //console.log"enough slides left")
                 currentSlide.current += 1
                 offset.current -= window.innerWidth
                 slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
@@ -266,7 +269,7 @@ function LoadingPage() {
                 currentSlide.current += 1
                 offset.current -= window.innerWidth
                 slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
-                console.log("get more")
+                //console.log"get more")
                 fetchSlides()
             }
         })
@@ -284,9 +287,9 @@ function LoadingPage() {
         const interval = setInterval(() => {
             timer += 300;
             if (timer >= readingTimes.current[currentSlide.current]) {
-                console.log("current slide desc: " + slides[currentSlide.current].desc);
+                //console.log"current slide desc: " + slides[currentSlide.current].desc);
                 timer = 0;
-                console.log("Interval triggered")
+                //console.log"Interval triggered")
                 // fetchSlides()
                 nextSlide()
             }
@@ -336,11 +339,15 @@ function LoadingPage() {
                                     <div className='slideDescDiv'>
                                         <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
                                     </div>
-                                    <div className='slideInfoDiv'>
-                                        <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
-                                        <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
-                                        <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
-                                    </div>
+                                    <details className='slideDetails'>
+                                        <summary>Details</summary>
+                                        <div className='slideInfoDiv'>
+                                            <p className='slideInfo' ref={el => artistRefs.current[index] = el}>Artist: {slide.artist}</p>
+                                            <p className='slideInfo'>License: <a href={slide.licenseUrl} target="_blank" rel="noopener noreferrer">{slide.license}</a></p>
+                                            <p className='slideInfo'>Source: <a href={slide.sourceLink} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
+                                            <p className='croppingDisclaimer'>Images may be cropped to fit the screen</p>
+                                        </div>
+                                    </details>
                                 </div>
                             </div>
                         </div>

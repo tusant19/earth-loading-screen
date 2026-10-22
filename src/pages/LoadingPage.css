@@ -59,8 +59,8 @@
 .slideInner {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     border: 1px solid gray;
     margin-left: 5vw;
     width: fit-content;
@@ -83,4 +83,35 @@
 .slideDescDiv,
 .slideInfoDiv {
     text-align: center;
+}
+
+@media (width < 700px) {
+    .slideInner {
+        margin-left: 5vw;
+        width: 90vw;
+        max-height: 80dvh;
+    }
+    .slideImgDiv
+    {
+        overflow: hidden;
+        min-width: none;
+        max-width: 85vw;
+        min-height: 40vh;
+        max-height: 40vh;
+    }
+    .slideImg {
+        object-fit: cover;
+        margin-left: 2.5vw;
+        margin-right: 2.5vw;
+    }
+    .slideImgDiv {
+        width: 87vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.slideDetails {
+    margin-bottom: 1vh;
 }
