@@ -13,7 +13,7 @@ function LoadingPage() {
     const [delayBetweenSlides, setDelayBetweenSlides] = useState(5000);
     const [fadeOutInTimeSeconds, setFadeOutInTimeSeconds] = useState(2);
     const [apiRequestsInLastMinute, setApiRequestsInLastMinute] = useState(0);
-    const [wpm, setWpm] = useState(150);
+    const [wpm, setWpm] = useState(120);
     const [slides, setSlides] = useState([])
     const [seenImages, setSeenImages] = useState([])
     const infoRefs = useRef([])
@@ -37,7 +37,6 @@ function LoadingPage() {
             if (timer >= 1000) {
                 timer = 0;
                 resetEverything()
-                console.log("resetting everything due to resize")
                 quickFetchFirstSlide()
                 fetchSlides()
             }

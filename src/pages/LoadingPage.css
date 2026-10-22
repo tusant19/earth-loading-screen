@@ -92,17 +92,17 @@
 
 @media (width < 700px) {
     .slideInner {
-        margin-left: 5vw;
-        width: 90vw;
-        max-height: 80dvh;
+        margin-top: 10vw;
+        margin-left: 20vw;
+        width: 60vw;
     }
     .slideImgDiv
     {
         overflow: hidden;
         min-width: none;
-        max-width: 85vw;
-        min-height: 40vh;
-        max-height: 40vh;
+        max-width: 55vw;
+        min-height: 30vh;
+        max-height: 30vh;
     }
     .slideImg {
         object-fit: cover;
@@ -110,15 +110,16 @@
         margin-right: 2.5vw;
     }
     .slideImgDiv {
-        width: 87vw;
+        width: 57vw;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
     .slideDescDiv {
-    margin-left: 2.5vw;
-    margin-right: 2.5vw;
+        margin-left: 2.5vw;
+        margin-right: 2.5vw;
+        font-size: 90%;
     }
 }
 
