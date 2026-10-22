@@ -71,14 +71,12 @@ function LoadingPage() {
                                         if (hasSeenISSRef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
                                             continue;
                                         } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
-                                            setHasSeenISS(true)
                                             hasSeenISSRef.current = true;
                                         }
                                         // if seen NOAA hide further NOAA images because there's a lot
                                         if (hasSeenNOAARef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
                                             continue;
                                         } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
-                                            setHasSeenNOAA(true)
                                             hasSeenNOAARef.current = true;
                                         }
                                         let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
@@ -334,7 +332,7 @@ function LoadingPage() {
                                 <div className='slideImgDiv'>
                                     <img src={slide.imgLink} ref={el => imgRefs.current[index] = el} className="slideImg" alt="Current Slide Img" />
                                 </div>
-                                <div ref={el => infoRefs.current[index] = el}c lassName='slideDetailsDiv'>
+                                <div ref={el => infoRefs.current[index] = el} className='slideDetailsDiv'>
                                     <div className='slideDescDiv'>
                                         <p className='slideDesc' ref={el => descRefs.current[index] = el}></p>
                                     </div>
