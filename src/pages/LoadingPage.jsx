@@ -10,7 +10,7 @@ import logo from '../assets/logo.png'
 import loadingBar from '../assets/Sprite-0006v3.png'
 import loadingBarMobile from '../assets/Sprite-0006v3Vertical.png'
 import earthBg from '../assets/earthBgEvenMoreExpanded.png'
-import earthBgMobile from '../assets/earthBgVerticalCropped.png'
+import earthBgMobile from '../assets/earthBgVerticalCroppedv2.png'
 
 function LoadingPage() {
     const hasSeenISSRef = useRef(false)
