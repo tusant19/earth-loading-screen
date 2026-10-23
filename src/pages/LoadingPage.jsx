@@ -6,6 +6,9 @@ import { useRef } from 'react'
 import { franc } from 'franc'
 import './LoadingPage.css'
 import unsafeWords from '../components/unsafeWords'
+import logo from '../assets/logo.png'
+import loadingBar from '../assets/loadingBar2.png'
+import earthBg from '../assets/earthBg2.png'
 
 function LoadingPage() {
     const hasSeenISSRef = useRef(false)
@@ -385,9 +388,12 @@ function LoadingPage() {
 
     return (
         <div className='loadingPageMain'>
+            <div className="earthBgDiv">
+                <img src={earthBg} className="earthBg" alt="Earth Background" />
+            </div>
+            <img src={loadingBar} className="loadingBar" alt="Loading Bar" />
             <div className='startOverlay' ref={overlayRef} onClick={hideOverlay}>
-                <p>Universe incorporated</p>
-                <p>Press anywhere to start</p>
+                <img src={logo} className="startOverlayLogo" alt="Logo" />
             </div>
             <div className='trackContainer' ref={trackContainerRef}>
                 <div className='loadingPageTrack' ref={slideTrackRef}>
