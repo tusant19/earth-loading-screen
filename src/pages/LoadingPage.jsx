@@ -13,6 +13,7 @@ function LoadingPage() {
     const [delayBetweenSlides, setDelayBetweenSlides] = useState(5000);
     const [fadeOutInTimeSeconds, setFadeOutInTimeSeconds] = useState(2);
     const [apiRequestsInLastMinute, setApiRequestsInLastMinute] = useState(0);
+    const previousWidth = useRef(0);
     const [wpm, setWpm] = useState(120);
     const [slides, setSlides] = useState([])
     const [seenImages, setSeenImages] = useState([])
@@ -29,21 +30,24 @@ function LoadingPage() {
     const trackContainerRef = useRef(null)
 
     useEffect(() => {
+        previousWidth.current = window.innerWidth;
         let timer = 0;
         const interval = setInterval(() => {
-            timer += 500;
-        }, 500);
+            timer += 200;
+            if (window.innerWidth !== previousWidth.current) {
+                previousWidth.current = window.innerWidth;
+                handleResize();
+            }
+        }, 200);
         function handleResize() {
-            if (timer >= 1000) {
+            if (timer >= 200) {
                 timer = 0;
-                resetEverything()
-                quickFetchFirstSlide()
-                fetchSlides()
+                console.log("resize");
+                resetEverything();
+                
             }
         }
-        addEventListener('resize', handleResize);
         return () => {
-            removeEventListener('resize', handleResize);
             clearInterval(interval);
         };
     }, []);
@@ -66,10 +70,14 @@ function LoadingPage() {
         artistRefs.current = []
         offset.current = 0
         slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
-        quickFetchFirstSlide()
+        quickFetchFirstSlide(true)
+        slideRefs.map((slide, index) => {
+            slide.style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
+            slide.style.opacity = 1;
+        })
     }
 
-    function fetchSlides() {
+    function fetchSlides(override) {
         if (apiRequestsInLastMinute >= 60) {
             //console.log"API guardrail reached")
             return
@@ -92,8 +100,18 @@ function LoadingPage() {
             }
         })
         .then((response) => {
-            let slidesVar = slides;
-            let seenImagesVar = seenImages;
+            let slidesVar;
+            let seenImagesVar;
+            if (override) {
+                setSlides([])
+                setSeenImages([])
+                slidesVar = []
+                seenImagesVar = []
+            } else {
+                slidesVar = slides;
+                seenImagesVar = seenImages;
+            }
+            
             for (let i = 0; i < response.data.query.pages.length; i++) {
                 //console.log"checked image: ")
                 // check img type
@@ -242,6 +260,9 @@ function LoadingPage() {
             } else {
                 setSlides([...slidesVar])
                 setSeenImages([...seenImagesVar])
+            }
+            if (slidesVar.length < 4) {
+                fetchSlides()
             }
         })
         .catch((error) => {

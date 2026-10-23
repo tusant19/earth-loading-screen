@@ -104,6 +104,11 @@
     text-align: center;
 }
 
+.slideInfoDiv {
+    margin-left: 1vw;
+    margin-right: 1vw;
+}
+
 @media (width < 700px) {
     .slideInner {
         margin-top: 10vw;
@@ -133,7 +138,12 @@
     .slideDescDiv {
         margin-left: 2.5vw;
         margin-right: 2.5vw;
-        font-size: 90%;
+        font-size: 85%;
+    }
+    .slideInfoDiv {
+        margin-left: 2.5vw;
+        margin-right: 2.5vw;
+        font-size: 85%;
     }
 }
 
