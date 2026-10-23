@@ -63,14 +63,14 @@ function LoadingPage() {
         previousWidth.current = window.innerWidth;
         let timer = 0;
         const interval = setInterval(() => {
-            timer += 200;
+            timer += 25;
             if (window.innerWidth !== previousWidth.current) {
                 previousWidth.current = window.innerWidth;
                 handleResize();
             }
-        }, 200);
+        }, 25);
         function handleResize() {
-            if (timer >= 200) {
+            if (timer >= 25) {
                 timer = 0;
                 console.log("resize");
                 resetEverything();
@@ -82,29 +82,23 @@ function LoadingPage() {
         };
     }, []);
 
-    useEffect(() => {
-    })
-
     function resetEverything() {
-        setSlides([])
-        setSeenImages([])
-        hasSeenISSRef.current = false
-        hasSeenNOAARef.current = false
-        setApiRequestsInLastMinute(0)
-        infoRefs.current = []
-        imgRefs.current = []
-        readingTimes.current = []
-        currentSlide.current = 0
-        slideRefs.current = []
-        descRefs.current = []
-        artistRefs.current = []
-        offset.current = 0
-        slideTrackRef.current.style.transform = `translateX(${offset.current}px)`
-        quickFetchFirstSlide(true)
-        slideRefs.map((slide, index) => {
-            slide.style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
-            slide.style.opacity = 1;
-        })
+        //recalculate offset
+        offset.current = 0;
+        slides.forEach((slide, index) => {
+            if (index < currentSlide.current) {
+                offset.current -= window.innerWidth;
+            }
+        });
+        slideTrackRef.current.style.transform = `translateX(${offset.current}px)`;
+        //recalculate info widths
+        slides.forEach((slide, index) => {
+            if (window.innerWidth > 700) {
+                infoRefs.current[index].style.width = imgRefs.current[index].clientWidth + "px";
+            } else {
+                infoRefs.current[index].style.width = "100%";
+            }
+        });
     }
 
     function fetchSlides(override) {
@@ -391,7 +385,7 @@ function LoadingPage() {
         return () =>  {
             clearInterval(interval)
         }
-    }, [])
+    }, [slides, currentSlide.current, readingTimes.current])
 
     useEffect(() => {
         const interval = setInterval(() => {
