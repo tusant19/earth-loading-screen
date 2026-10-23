@@ -8,7 +8,9 @@ import './LoadingPage.css'
 import unsafeWords from '../components/unsafeWords'
 import logo from '../assets/logo.png'
 import loadingBar from '../assets/loadingBar2.png'
-import earthBg from '../assets/earthBg2.png'
+import loadingBarMobile from '../assets/loadingBar.png'
+import earthBg from '../assets/earthBgEvenMoreExpanded.png'
+import earthBgMobile from '../assets/earthBgVerticalCropped.png'
 
 function LoadingPage() {
     const hasSeenISSRef = useRef(false)
@@ -31,6 +33,31 @@ function LoadingPage() {
     const slideTrackRef = useRef(null)
     const overlayRef = useRef(null)
     const trackContainerRef = useRef(null)
+
+    function bgSwithcer() {
+        if (window.innerWidth > 700) {
+            return (
+                <img src={earthBg} className="earthBg" alt="Earth Background" />
+            )
+        } else {
+            return (
+                <img src={earthBgMobile} className="earthBg" alt="Earth Background" />
+            )
+        }
+    }
+
+    function loadingBarSwitcher() {
+        if (window.innerWidth > 700) {
+            return (
+                <img src={loadingBar} className="loadingBar" alt="Loading Bar" />
+            )
+        } else {
+            return (
+                <img src={loadingBarMobile} className="loadingBar" alt="Loading Bar" />
+            )
+        }
+    }
+
 
     useEffect(() => {
         previousWidth.current = window.innerWidth;
@@ -389,9 +416,11 @@ function LoadingPage() {
     return (
         <div className='loadingPageMain'>
             <div className="earthBgDiv">
-                <img src={earthBg} className="earthBg" alt="Earth Background" />
+                {bgSwithcer()}
             </div>
-            <img src={loadingBar} className="loadingBar" alt="Loading Bar" />
+            <div className="loadingBarDiv">
+                {loadingBarSwitcher()}
+            </div>
             <div className='startOverlay' ref={overlayRef} onClick={hideOverlay}>
                 <img src={logo} className="startOverlayLogo" alt="Logo" />
             </div>
