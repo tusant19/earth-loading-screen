@@ -12,6 +12,8 @@ import loadingBarMobile from '../assets/Sprite-0006v3VerticalCropped.png'
 import earthBg from '../assets/earthBgEvenMoreExpanded.png'
 import earthBgMobile from '../assets/earthBgVerticalCroppedv2.png'
 import thingsToBeLoading from '../components/thingToBeLoading.js'
+import settingsIconDark from '../assets/settingsDark.svg'
+import settingsIconLight from '../assets/settingLight.svg'
 
 function LoadingPage() {
     const hasSeenISSRef = useRef(false)
@@ -37,16 +39,21 @@ function LoadingPage() {
     const loadingBarRef = useRef(null)
     const loadingTextRef = useRef(null)
     const [currentLoading, setCurrentLoading] = useState("")
+    const ignoreISSLimitRef = useRef(false)
+    const ignoreNOAALimitRef = useRef(false)
+    const bgRef = useRef(null)
+    const loadingTextRefText = useRef(null)
+    const settingsMenuRef = useRef(null)
 
     function bgSwithcer() {
         setLoadingTextOffset()
         if (window.innerWidth > 700) {
             return (
-                <img src={earthBg} className="earthBg" alt="Earth Background" />
+                <img src={earthBg} ref={bgRef} className="earthBg" alt="Earth Background" />
             )
         } else {
             return (
-                <img src={earthBgMobile} className="earthBg" alt="Earth Background" />
+                <img src={earthBgMobile} ref={bgRef} className="earthBg" alt="Earth Background" />
             )
         }
     }
@@ -103,9 +110,9 @@ function LoadingPage() {
     function setLoadingTextOffset() {
         if (loadingTextRef.current && loadingBarRef.current) {
             loadingTextRef.current.style.bottom = loadingBarRef.current.offsetHeight + "px";
-            console.log(loadingBarRef.current.offsetWidth);
+            //console.log(loadingBarRef.current.offsetWidth);
             loadingTextRef.current.style.left = (window.innerWidth - loadingBarRef.current.offsetWidth) / 2 + (window.innerWidth / 100)+ "px";
-            console.log("loading text offset set: " + loadingTextRef.current.style.bottom + " left: " + loadingTextRef.current.style.left);
+            //console.log("loading text offset set: " + loadingTextRef.current.style.bottom + " left: " + loadingTextRef.current.style.left);
         }
     }
 
@@ -181,17 +188,21 @@ function LoadingPage() {
                                 if (franc(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value) === "eng") {
                                     // check img description for unsafe words
                                     if (checkSlideContentSafety(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) {
-                                        // if seen ISS hide further ISS images because there's a lot
-                                        if (hasSeenISSRef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
-                                            continue;
-                                        } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
-                                            hasSeenISSRef.current = true;
+                                        if (ignoreISSLimitRef.current == false) {
+                                            // if seen ISS hide further ISS images because there's a lot
+                                            if (hasSeenISSRef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                                continue;
+                                            } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("iss")) {
+                                                hasSeenISSRef.current = true;
+                                            }
                                         }
-                                        // if seen NOAA hide further NOAA images because there's a lot
-                                        if (hasSeenNOAARef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
-                                            continue;
-                                        } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
-                                            hasSeenNOAARef.current = true;
+                                        if (ignoreNOAALimitRef.current == false) {
+                                            // if seen NOAA hide further NOAA images because there's a lot
+                                            if (hasSeenNOAARef.current == true && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                                continue;
+                                            } else if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.toLowerCase().includes("noaa")) {
+                                                hasSeenNOAARef.current = true;
+                                            }
                                         }
                                         let spaceCount = (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.match(/ /g) || []).length;
                                         let readingTime = (spaceCount + 1) / wpm * 60 * 1000 + (fadeOutInTimeSeconds * 1000 * 2);
@@ -434,6 +445,25 @@ function LoadingPage() {
         }
     }
 
+    function hideBg() {
+        if (bgRef.current.style.display !== "none") {
+            bgRef.current.style.display = "none";
+            loadingTextRefText.current.style.color = "black";
+        } else {
+            bgRef.current.style.display = "block";
+            loadingTextRefText.current.style.color = "white";
+        }
+        
+    }
+
+    function toggleSettingsMenu() {
+        if (settingsMenuRef.current.style.opacity != "1") {
+            settingsMenuRef.current.style.opacity = "1";
+        } else {
+            settingsMenuRef.current.style.opacity = "0";
+        }
+    }
+
     useEffect(() => {
         quickFetchFirstSlide();
         artistRefs.current[0]?.setHTML("Artist: " + slides[0]?.artist)
@@ -443,13 +473,33 @@ function LoadingPage() {
     return (
         <div className='loadingPageMain'>
             <div className="settingsIconDiv">
-                {/* <img src={settingsIcon} className="settingsIcon" alt="Settings" /> */}
+                <img src={settingsIconLight} className="settingsIcon" alt="Settings" onClick={toggleSettingsMenu} />
+            </div>
+            <div className="settingsMenuDiv" ref={settingsMenuRef}>
+                <p className="settingsMenuText">Settings</p>
+                <div className="wpmSliderDiv">
+                    <input type="range" min="60" max="300" value={wpm} className="wpmSlider" onChange={(e) => setWpm(e.target.value)} />
+                    <p className="wpmSliderText">Words per minute: {wpm}</p>
+                </div>
+                <p className="ignoreSlideTypeLimitText">By default only one image that has ISS or NOAA in the description is shown. You can change that here.</p>
+                <div className="ignoreSlideTypeLimitCheckboxDiv">
+                    
+                    <input type="checkbox" id="ignoreISSLimit" onChange={(e) => ignoreISSLimitRef.current = e.target.checked} />
+                    <label htmlFor="ignoreISSLimit">Ignore ISS image limit</label>
+                    <input type="checkbox" id="ignoreNOAALimit" onChange={(e) => ignoreNOAALimitRef.current = e.target.checked} />
+                    <label htmlFor="ignoreNOAALimit">Ignore NOAA image limit</label>
+                    
+                </div>
+                <div className="dontShowBackgroundCheckboxDiv">
+                    <input type="checkbox" id="dontDisplayBackground" onChange={(e) => hideBg()} />
+                    <label htmlFor="dontDisplayBackground">Don't display background</label>
+                </div>
             </div>
             <div className="earthBgDiv">
                 {bgSwithcer()}
             </div>
             <div className="loadingBarTopTextDiv" ref={loadingTextRef}>
-                <p className="loadingBarLoadingText silkscreen-regular" >Loading: {currentLoading}...</p>
+                <p className="loadingBarLoadingText silkscreen-regular" ref={loadingTextRefText}>Loading: {currentLoading}...</p>
             </div>
             <div className="loadingBarDiv">
                 {loadingBarSwitcher()}

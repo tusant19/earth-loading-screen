@@ -223,3 +223,92 @@
     color: white;
 }
 
+.settingsMenuDiv {
+    opacity: 0;
+    border-radius: 1vh;
+    width: 40vw;
+    height: 30vh;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid gray;
+    display: flex;
+    font-size: 1.5vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 40vh;
+    left: 30vw;
+    z-index: 10000;
+}
+
+.wpmSliderDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1vh;
+}
+
+.wpmSliderDiv input[type="range"] {
+    width: 15vw;
+}
+
+.wpmSliderText {
+    margin-bottom: 0.7vh;
+    margin-top: 0.7vh;
+}
+
+.ignoreSlideTypeLimitCheckboxDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1vh;
+}
+
+
+.ignoreSlideTypeLimitCheckboxDiv input {
+    margin-left: 1vw;
+}
+
+.dontShowBackgroundCheckboxDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1vh;
+}
+
+.settingsIconDiv {
+    position: fixed;
+    top: 1vh;
+    right: 1vw;
+    z-index: 10001;
+}
+
+.settingsIcon {
+    height: 5vh;
+    height: auto;
+    cursor: pointer;
+}
+
+@media (width < 700px) {
+    .settingsMenuDiv {
+        width: 80dvw;
+        height: 40dvh;
+        top: 30dvh;
+        left: 10dvw;
+    }
+    .wpmSliderDiv input[type="range"] {
+        width: 50vw;
+    }
+}
+
+.ignoreSlideTypeLimitText {
+    margin-left: 1vw;
+    margin-right: 1vw;
+    margin-top: 1vh;
+    margin-bottom: 0.5vh;
+    font-size: 1vh;
+    text-align: center;
+}
