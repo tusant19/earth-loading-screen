@@ -487,7 +487,7 @@ function LoadingPage() {
 
 
     function handleClickOutside(event) {
-        if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target) && event.target !== settingsMenuRef.current) {
+        if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target) && event.target !== settingsMenuRef.current && event.target !== settingsIconRef.current) {
             settingsMenuRef.current.style.opacity = "0";
         }
     }
