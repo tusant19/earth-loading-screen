@@ -497,6 +497,9 @@ function LoadingPage() {
 
     return (
         <div className='loadingPageMain'>
+            <div className="githubLinkDiv">
+                <a href="https://github.com/tusant19/earth-loading-screen" target="_blank" rel="noopener noreferrer">github</a>
+            </div>
             <div className="settingsIconDiv">
                 <img src={settingsIconLight} className="settingsIcon" alt="Settings" onClick={toggleSettingsMenu} />
             </div>

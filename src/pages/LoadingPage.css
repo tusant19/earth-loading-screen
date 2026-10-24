@@ -312,3 +312,17 @@
     font-size: 1vh;
     text-align: center;
 }
+
+.githubLinkDiv {
+    position: fixed;
+    top: 0.8vh;
+    left: 0.8vh;
+    z-index: 10001;   
+}
+
+.githubLinkDiv a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5vh;
+    font-size: 1.5vh;
+}
