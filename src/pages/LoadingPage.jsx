@@ -44,6 +44,7 @@ function LoadingPage() {
     const bgRef = useRef(null)
     const loadingTextRefText = useRef(null)
     const settingsMenuRef = useRef(null)
+    const githubLinkRef = useRef(null)
 
     function bgSwithcer() {
         setLoadingTextOffset()
@@ -449,9 +450,11 @@ function LoadingPage() {
         if (bgRef.current.style.display !== "none") {
             bgRef.current.style.display = "none";
             loadingTextRefText.current.style.color = "black";
+            githubLinkRef.current.style.color = "black";
         } else {
             bgRef.current.style.display = "block";
             loadingTextRefText.current.style.color = "white";
+            githubLinkRef.current.style.color = "white";
         }
         
     }
@@ -498,7 +501,7 @@ function LoadingPage() {
     return (
         <div className='loadingPageMain'>
             <div className="githubLinkDiv">
-                <a href="https://github.com/tusant19/earth-loading-screen" target="_blank" rel="noopener noreferrer">github</a>
+                <a href="https://github.com/tusant19/earth-loading-screen" target="_blank" rel="noopener noreferrer" ref={githubLinkRef}>github</a>
             </div>
             <div className="settingsIconDiv">
                 <img src={settingsIconLight} className="settingsIcon" alt="Settings" onClick={toggleSettingsMenu} />
