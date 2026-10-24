@@ -45,6 +45,7 @@ function LoadingPage() {
     const loadingTextRefText = useRef(null)
     const settingsMenuRef = useRef(null)
     const githubLinkRef = useRef(null)
+    const settingsIconRef = useRef(null)
 
     function bgSwithcer() {
         setLoadingTextOffset()
@@ -446,20 +447,26 @@ function LoadingPage() {
         }
     }
 
+    //handle bg hiding when selected in menu
     function hideBg() {
         if (bgRef.current.style.display !== "none") {
             bgRef.current.style.display = "none";
             loadingTextRefText.current.style.color = "black";
             githubLinkRef.current.style.color = "black";
+            // switch to dark settings icon
+            settingsIconRef.current.src = settingsIconDark;
         } else {
             bgRef.current.style.display = "block";
             loadingTextRefText.current.style.color = "white";
             githubLinkRef.current.style.color = "white";
+            // switch to light settings icon
+            settingsIconRef.current.src = settingsIconLight;
         }
         
     }
 
     function toggleSettingsMenu() {
+        console.log("toggle settings menu")
         if (settingsMenuRef.current.style.opacity != "1") {
             settingsMenuRef.current.style.opacity = "1";
             settingsMenuRef.current.style.pointerEvents = "auto";
@@ -504,7 +511,7 @@ function LoadingPage() {
                 <a href="https://github.com/tusant19/earth-loading-screen" target="_blank" rel="noopener noreferrer" ref={githubLinkRef}>github</a>
             </div>
             <div className="settingsIconDiv">
-                <img src={settingsIconLight} className="settingsIcon" alt="Settings" onClick={toggleSettingsMenu} />
+                <img src={settingsIconLight} ref={settingsIconRef} className="settingsIcon" alt="Settings" onClick={toggleSettingsMenu} />
             </div>
             <div className="settingsMenuDiv" ref={settingsMenuRef}>
                 <p className="settingsMenuText">Settings</p>
