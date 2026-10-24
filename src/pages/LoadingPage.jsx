@@ -464,6 +464,19 @@ function LoadingPage() {
         }
     }
 
+    function handleClickOutside(event) {
+        if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target) && event.target !== settingsMenuRef.current) {
+            settingsMenuRef.current.style.opacity = "0";
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     useEffect(() => {
         quickFetchFirstSlide();
         artistRefs.current[0]?.setHTML("Artist: " + slides[0]?.artist)
