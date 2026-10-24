@@ -505,7 +505,7 @@ function LoadingPage() {
                 {loadingBarSwitcher()}
             </div>
             <div className='startOverlay' ref={overlayRef} onClick={hideOverlay}>
-                <img src={logo} className="startOverlayLogo" alt="Logo" />
+                <img src={logo} onClick={hideOverlay} className="startOverlayLogo" alt="Logo" />
             </div>
             <div className='trackContainer' ref={trackContainerRef}>
                 <div className='loadingPageTrack' ref={slideTrackRef}>
