@@ -459,10 +459,22 @@ function LoadingPage() {
     function toggleSettingsMenu() {
         if (settingsMenuRef.current.style.opacity != "1") {
             settingsMenuRef.current.style.opacity = "1";
+            settingsMenuRef.current.style.pointerEvents = "auto";
         } else {
             settingsMenuRef.current.style.opacity = "0";
+            settingsMenuRef.current.style.pointerEvents = "none";
         }
     }
+
+    //prevent clicks of settings options when not visible
+    useEffect(() => {
+        if (settingsMenuRef.current) {
+            if (settingsMenuRef.current.style.opacity != "1") {
+                settingsMenuRef.current.style.pointerEvents = "none";
+            }
+        }
+    }, [])
+
 
     function handleClickOutside(event) {
         if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target) && event.target !== settingsMenuRef.current) {
