@@ -102,7 +102,7 @@ function LoadingPage() {
             let randomText = thingsToBeLoading[Math.floor(Math.random() * thingsToBeLoading.length)]
             setCurrentLoading(randomText);
 
-        }, 10000);
+        }, 20000);
 
         return () => clearInterval(interval)
     }, [])
