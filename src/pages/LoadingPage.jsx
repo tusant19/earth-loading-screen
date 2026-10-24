@@ -7,10 +7,11 @@ import { franc } from 'franc'
 import './LoadingPage.css'
 import unsafeWords from '../components/unsafeWords'
 import logo from '../assets/logo.png'
-import loadingBar from '../assets/Sprite-0006v3.png'
-import loadingBarMobile from '../assets/Sprite-0006v3Vertical.png'
+import loadingBar from '../assets/Sprite-0006v3Cropped.png'
+import loadingBarMobile from '../assets/Sprite-0006v3VerticalCropped.png'
 import earthBg from '../assets/earthBgEvenMoreExpanded.png'
 import earthBgMobile from '../assets/earthBgVerticalCroppedv2.png'
+import thingsToBeLoading from '../components/thingToBeLoading'
 
 function LoadingPage() {
     const hasSeenISSRef = useRef(false)
@@ -33,8 +34,12 @@ function LoadingPage() {
     const slideTrackRef = useRef(null)
     const overlayRef = useRef(null)
     const trackContainerRef = useRef(null)
+    const loadingBarRef = useRef(null)
+    const loadingTextRef = useRef(null)
+    const [currentLoading, setCurrentLoading] = useState("")
 
     function bgSwithcer() {
+        setLoadingTextOffset()
         if (window.innerWidth > 700) {
             return (
                 <img src={earthBg} className="earthBg" alt="Earth Background" />
@@ -49,11 +54,11 @@ function LoadingPage() {
     function loadingBarSwitcher() {
         if (window.innerWidth > 700) {
             return (
-                <img src={loadingBar} className="loadingBar" alt="Loading Bar" />
+                <img src={loadingBar} ref={loadingBarRef} className="loadingBar" alt="Loading Bar" />
             )
         } else {
             return (
-                <img src={loadingBarMobile} className="loadingBar" alt="Loading Bar" />
+                <img src={loadingBarMobile} ref={loadingBarRef} className="loadingBar" alt="Loading Bar" />
             )
         }
     }
@@ -74,13 +79,35 @@ function LoadingPage() {
                 timer = 0;
                 console.log("resize");
                 resetEverything();
+                setLoadingTextOffset();
                 
             }
         }
         return () => {
             clearInterval(interval);
         };
-    }, []);
+    }, [slides, currentSlide.current]);
+
+    useEffect(() => {
+        setLoadingTextOffset();
+        setCurrentLoading(thingsToBeLoading[Math.floor(Math.random() * thingsToBeLoading.length)])
+        const interval = setInterval(() => {
+            let randomText = thingsToBeLoading[Math.floor(Math.random() * thingsToBeLoading.length)]
+            setCurrentLoading(randomText);
+
+        }, 10000);
+
+        return () => clearInterval(interval)
+    }, [])
+
+    function setLoadingTextOffset() {
+        if (loadingTextRef.current && loadingBarRef.current) {
+            loadingTextRef.current.style.bottom = loadingBarRef.current.offsetHeight + "px";
+            console.log(loadingBarRef.current.offsetWidth);
+            loadingTextRef.current.style.left = (window.innerWidth - loadingBarRef.current.offsetWidth) / 2 + (window.innerWidth / 100)+ "px";
+            console.log("loading text offset set: " + loadingTextRef.current.style.bottom + " left: " + loadingTextRef.current.style.left);
+        }
+    }
 
     function resetEverything() {
         //recalculate offset
@@ -94,9 +121,13 @@ function LoadingPage() {
         //recalculate info widths
         slides.forEach((slide, index) => {
             if (window.innerWidth > 700) {
-                infoRefs.current[index].style.width = imgRefs.current[index].clientWidth + "px";
+                if (imgRefs.current[index]) {
+                    infoRefs.current[index].style.width = imgRefs.current[index].clientWidth + "px";
+                }
             } else {
-                infoRefs.current[index].style.width = "100%";
+                if (infoRefs.current[index]) {
+                    infoRefs.current[index].style.width = "100%";
+                }
             }
         });
     }
@@ -322,8 +353,10 @@ function LoadingPage() {
 
         if (currentSlide.current == 0) {
             for (let slide of slideRefs.current) {
-                slide.style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
-                slide.style.opacity = 0;
+                if (slide) {
+                    slide.style.transition = `opacity ${fadeOutInTimeSeconds}s ease-in-out`
+                    slide.style.opacity = 0;
+                }
             }
         }
         // fade out the currently displayed slide
@@ -411,6 +444,9 @@ function LoadingPage() {
         <div className='loadingPageMain'>
             <div className="earthBgDiv">
                 {bgSwithcer()}
+            </div>
+            <div className="loadingBarTopTextDiv" ref={loadingTextRef}>
+                <p className="loadingBarLoadingText silkscreen-regular" >Loading: {currentLoading}...</p>
             </div>
             <div className="loadingBarDiv">
                 {loadingBarSwitcher()}

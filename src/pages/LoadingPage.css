@@ -126,16 +126,16 @@
 @media (width < 700px) {
     .slideInner {
         margin-top: 10vw;
-        margin-left: 20vw;
-        width: 60vw;
+        margin-left: 12.5vw;
+        width: 75vw;
     }
     .slideImgDiv
     {
         overflow: hidden;
         min-width: none;
-        max-width: 55vw;
-        min-height: 30vh;
-        max-height: 30vh;
+        max-width: 70vw;
+        min-height: 32vh;
+        max-height: 32vh;
     }
     .slideImg {
         object-fit: cover;
@@ -143,7 +143,7 @@
         margin-right: 2.5vw;
     }
     .slideImgDiv {
-        width: 57vw;
+        width: 72vw;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -205,5 +205,21 @@
         margin-right: 1vw;
         width: 98%;
     }
+}
+
+.loadingBarTopTextDiv {
+    position: fixed;
+    display: flex;
+    justify-content: left;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+}
+
+.loadingBarLoadingText {
+    margin-bottom: 0.5vh;
+    font-size: 1.5vh;
+    color: white;
 }
 
