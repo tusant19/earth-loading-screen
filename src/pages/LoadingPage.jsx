@@ -11,7 +11,7 @@ import loadingBar from '../assets/Sprite-0006v3Cropped.png'
 import loadingBarMobile from '../assets/Sprite-0006v3VerticalCropped.png'
 import earthBg from '../assets/earthBgEvenMoreExpanded.png'
 import earthBgMobile from '../assets/earthBgVerticalCroppedv2.png'
-import thingsToBeLoading from '../components/thingToBeLoading'
+import thingsToBeLoading from '../components/thingToBeLoading.js'
 
 function LoadingPage() {
     const hasSeenISSRef = useRef(false)
@@ -174,7 +174,7 @@ function LoadingPage() {
                     // check img description for html (not in use)
                     if ( /*(/<[^>]+>/.test(response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value)) == false */ true) {
                         // check img description length
-                        if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {       
+                        if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 20 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 200) {       
                             // check if image has been seen before
                             if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
                                 // check img description language
@@ -276,7 +276,7 @@ function LoadingPage() {
                 // check img type
                 if (response.data.query.pages[i].imageinfo[0].mime === "image/jpeg" || response.data.query.pages[i].imageinfo[0].mime === "image/png" || response.data.query.pages[i].imageinfo[0].mime === "image/gif" || response.data.query.pages[i].imageinfo[0].mime === "image/webp" || response.data.query.pages[i].imageinfo[0].mime === "image/svg+xml") {
                     // check img description length
-                    if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 40 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 300) {
+                    if (response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length > 20 && response.data.query.pages[i].imageinfo[0].extmetadata?.ImageDescription?.value.length < 200) {
                         // check if image has been seen before
                         if (seenImagesVar.includes(response.data.query.pages[i].imageinfo[0].url) === false) {
                             // check image desctiption for unsafe words
@@ -442,6 +442,9 @@ function LoadingPage() {
 
     return (
         <div className='loadingPageMain'>
+            <div className="settingsIconDiv">
+                {/* <img src={settingsIcon} className="settingsIcon" alt="Settings" /> */}
+            </div>
             <div className="earthBgDiv">
                 {bgSwithcer()}
             </div>
