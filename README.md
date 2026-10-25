@@ -1,11 +1,11 @@
 <h1>Earth loading screen: A joke loading screen for earth</h1>
-heavily inspired by a tiktok trend.
+<p>heavily inspired by a tiktok trend. </p>
 <img src="./src/assets/readmeScreenShot.png" alt="screenshot of site" height="300">
 
-Try it here: https://earth-loading-screen.santtu.uk/
+<p>Try it here: <a href="https://earth-loading-screen.santtu.uk/">https://earth-loading-screen.santtu.uk/</a></p>
 
 <h2>Test locally by running these in the folder:</h2>
- - npm i
+ - npm install
  - npm run dev
 
 <h2>How it works:</h2>
