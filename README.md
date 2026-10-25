@@ -1,4 +1,5 @@
-<h1>Earth loading screen: A joke loading screen for earth heavily inspired by a tiktok trend.</h1>
+<h1>Earth loading screen: A joke loading screen for earth</h1>
+heavily inspired by a tiktok trend.
 <img src="./src/assets/readmeScreenShot.png" alt="screenshot of site" height="300">
 
 Try it here: https://earth-loading-screen.santtu.uk/
