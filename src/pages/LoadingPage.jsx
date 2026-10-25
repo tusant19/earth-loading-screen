@@ -519,6 +519,10 @@ function LoadingPage() {
                     <input type="range" min="60" max="300" value={wpm} className="wpmSlider" onChange={(e) => setWpm(e.target.value)} />
                     <p className="wpmSliderText">Words per minute: {wpm}</p>
                 </div>
+                <div className='fadeOutSliderDiv'>
+                    <input type="range" min="0" max="5" step="0.1" value={fadeOutInTimeSeconds} className="fadeOutSlider" onChange={(e) => setFadeOutInTimeSeconds(e.target.value)} />
+                    <p className="fadeOutSliderText">Fade out/in time: {fadeOutInTimeSeconds}s</p>
+                </div>
                 <p className="ignoreSlideTypeLimitText">By default only one image that has ISS or NOAA in the description is shown. You can change that here.</p>
                 <div className="ignoreSlideTypeLimitCheckboxDiv">
                     

@@ -339,3 +339,31 @@
     font-size: 1.5vh;
     font-size: 1.5vh;
 }
+
+.fadeOutSliderDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1vh;
+}
+
+@media (width < 700px) {
+    .fadeOutSliderDiv input {
+        width: 50vw;
+    }
+}
+
+@media (height < 700px) {
+    .fadeOutSliderDiv {
+        font-size: 2.2vh;
+    }
+    .wpmSliderDiv {
+        font-size: 2.2vh;
+    }
+}
+
+.fadeOutSliderText {
+    margin-bottom: 0.7vh;
+    margin-top: 0.7vh;
+}
