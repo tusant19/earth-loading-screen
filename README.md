@@ -17,6 +17,8 @@
 
 <p>If you want to configure for how long the slides are on screen you can do that in the settings by opening the settings menu with the associated icon and setting the words per minute to your liking. </p>
 
+<p>You can also set the time for how long it takes for the slide to fade in and out in the settigns</p>
+
 <p>By default only one image with ISS or NOAA is shown because there tends to be a lot of those that are not very different. If you want to disable one or both of these you can also do that in the settings menu.</p>
 
 <p>You can also disable the background image if you would prefer a white background.</p>
