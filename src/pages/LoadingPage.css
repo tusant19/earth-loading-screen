@@ -319,6 +319,12 @@
     }
 }
 
+@media (height < 700px) {
+    .ignoreSlideTypeLimitText {
+        font-size: 2.2vh;
+    }
+}
+
 .githubLinkDiv {
     position: fixed;
     top: 0.8vh;
