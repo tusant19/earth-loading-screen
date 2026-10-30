@@ -296,8 +296,8 @@
 @media (width < 700px) {
     .settingsMenuDiv {
         width: 80dvw;
-        height: 40dvh;
-        top: 30dvh;
+        height: 55dvh;
+        top: 22.5dvh;
         left: 10dvw;
     }
     .wpmSliderDiv input[type="range"] {
